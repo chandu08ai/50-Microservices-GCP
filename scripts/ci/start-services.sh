@@ -21,7 +21,7 @@ echo "▶ building Go and Java services..."
 while read -r name lang port; do
   case "$lang" in
     go)   (cd "$ROOT/services/$name" && CGO_ENABLED=0 go build -o "$RUN/bin/$name" .) ;;
-    java) javac -d "$RUN/java/$name" "$ROOT/libs/javakit/Kit.java" "$ROOT/services/$name/Main.java" 2>&1 | grep -v "Picked up" || true ;;
+    java) mkdir -p "$RUN/java/$name" && javac -d "$RUN/java/$name" "$ROOT/libs/javakit/Kit.java" "$ROOT/services/$name/Main.java" 2>&1 | grep -v "Picked up" || true ;;
   esac
 done < <(jq_lines)
 
@@ -41,8 +41,16 @@ done < <(jq_lines)
 echo "▶ waiting for health checks..."
 for i in $(seq 1 60); do
   up=0
-  while read -r name lang port; do curl -sf "http://127.0.0.1:$port/healthz" >/dev/null && up=$((up+1)); done < <(jq_lines)
+  while read -r name lang port; do
+    if curl -sf "http://127.0.0.1:$port/healthz" >/dev/null; then
+      up=$((up+1))
+    fi
+  done < <(jq_lines)
   [ "$up" -eq 50 ] && break
   sleep 1
 done
 echo "✅ $up/50 services healthy on the CI runner (logs in .run/logs)"
+if [ "$up" -ne 50 ]; then
+  echo "❌ Expected 50 healthy services, but only $up were up."
+  exit 1
+fi

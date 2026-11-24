@@ -1,4 +1,10 @@
 # RailShack GCP (GKE) Values Override
+image:
+  registry: ghcr.io
+  repository: chandu08ai
+  tag: latest
+  pullPolicy: IfNotPresent
+
 app:
   environment: production
   clusterName: gcp-gke

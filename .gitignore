@@ -1,6 +1,36 @@
+# Runtime and build artifacts
 .run/
 node_modules/
 *.class
+bin/
+dist/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files and credentials (CRITICAL)
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Cloud credentials & local configs
+*service-account*.json
+*credentials*.json
+gcp-key*.json
+kubeconfig*
+.kube/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
 # Interactive architecture page is kept private (only the static PNGs are published)
 docs/architecture/*.html

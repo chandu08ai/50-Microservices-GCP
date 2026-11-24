@@ -1,0 +1,34 @@
+# RailShack GCP (GKE) Values Override
+app:
+  environment: production
+  clusterName: gcp-gke
+
+defaults:
+  replicas: 1              # 1 pod per service fits easily in a standard budget/trial
+  pdb:
+    enabled: false         # Disabling PDB avoids node draining blocks during testing
+
+# Expose frontend via standard GCP external LoadBalancer
+access:
+  mode: loadbalancer       # In GKE, this automatically provisions a Google Cloud External IP!
+
+postgres:
+  storage:
+    className: standard-rwo  # GKE's default Persistent Disk CSI driver
+    createEBSClass: false    # Turn OFF AWS EBS StorageClass creation
+  metrics:
+    enabled: false
+
+redis:
+  metrics:
+    enabled: false
+
+# Monitoring dashboards can be enabled if you install kube-prometheus-stack
+serviceMonitor:
+  enabled: false
+grafanaDashboard:
+  enabled: false
+prometheusRules:
+  enabled: false
+grafanaIngress:
+  enabled: false

@@ -1,0 +1,86 @@
+GitHub Push Troubleshooting – 50-Microservices-GCP
+
+Project folder: C:\50-MicroServices-Project-By-DevOpsShack-main
+
+GitHub repository: https://github.com/chandu08ai/50-Microservices-GCP
+
+1. Configure Git identity (one-time setup)
+
+git config –global user.name chandu08ai 
+git config –global user.email udaychandu1.madivada@gmail.com
+
+These commands configure the author name and email for commits. They do not sign in to GitHub.
+
+2. Authenticate with GitHub
+
+When running a Git command such as git push, Git may display: info: please complete authentication in your browser…
+
+Complete the browser authentication prompt.
+
+3. Initial push rejected: fetch first
+
+Command: git push -u origin main
+
+Error: [rejected] main -> main (fetch first)
+
+Reason: The GitHub repository already had a commit (for example, the LICENSE file added when creating the repository), which was not in the local project history.
+
+4. Check local repository status
+
+git status
+
+In this case, Git reported: On branch main nothing to commit, working tree clean
+
+5. Pull remote changes using rebase
+
+git pull –rebase origin main
+
+This downloaded the remote commit and attempted to replay the local commit on top of it.
+
+6. Resolve the LICENSE add/add conflict
+
+Conflict reported: CONFLICT (add/add): Merge conflict in LICENSE
+
+Reason: A LICENSE file existed both in the GitHub repository and in the downloaded local project, and the two versions differed.
+
+To keep the LICENSE file from the remote/base repository during thisrebase, 
+run: git checkout –ours LICENSE
+
+Then mark the conflict as resolved: git add LICENSE
+
+Important: During a rebase, –ours refers to the current base (the remote changes being rebased onto), while –theirs refers to the local commit being replayed. Check the file before choosing if you want the other version.
+
+7. Continue the rebase
+
+git rebase –continue
+
+If another conflict appears: 
+- Open the conflicted file and decide which content to keep. 
+- Remove conflict markers if present: <<<<<<<======= >>>>>>> 
+- Save the corrected file. 
+- Stage it with: git add  
+- Continue with: git rebase –continue
+
+If Git opens an editor for the commit message, save and close it.
+
+8. Push the project
+
+After the rebase completes: git push -u origin main
+
+The project was successfully uploaded to the GitHub repository.
+
+Repository: https://github.com/chandu08ai/50-Microservices-GCP
+
+Useful commands
+
+Check status: git status
+
+View configured identity: git config –global –list
+
+View remote repository: git remote -v
+
+View recent commits: git log –oneline -5
+
+Safety note
+
+Do not use git push –force as a first fix. It can overwrite remote history.
